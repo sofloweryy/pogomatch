@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POGO 审美天梯对决 | 测测你们能不能一起去现场撞击</title>
-    <!-- 引入 Tailwind CSS (复古朋克/独立杂志风配色) -->
+    <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Supabase JS 客户端 -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- 引入 Supabase UMD 稳定版客户端 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         retro: {
-                            bg: '#e8e4d9',      /* 旧报纸底色 */
-                            card: '#f4f1e1',    /* 偏黄的卡片色 */
-                            text: '#2d2d2d',    /* 褪色的炭黑 */
-                            accent: '#b23a48',  /* 黯淡的失真红 */
-                            border: '#8a8571'   /* 粗粝边框色 */
+                            bg: '#e8e4d9',
+                            card: '#f4f1e1',
+                            text: '#2d2d2d',
+                            accent: '#b23a48',
+                            border: '#8a8571'
                         }
                     },
                     fontFamily: {
@@ -39,7 +39,6 @@
 
     <div class="max-w-xl w-full bg-retro-card border-4 border-retro-text p-6 md:p-8 shadow-[8px_8px_0_0_#2d2d2d] relative">
         
-        <!-- 页面标题 -->
         <header class="text-center mb-6 border-b-2 border-dashed border-retro-border pb-4">
             <h1 class="text-2xl md:text-3xl font-bold tracking-tighter">/// POGO 审美天梯对决 ///</h1>
             <p class="text-xs md:text-sm text-gray-600 mt-1">划卡对决 · 看看你和好友是不是能一起去 Pogo 圈撞击的同类</p>
@@ -53,7 +52,7 @@
             </div>
             <div>
                 <label class="block text-xs font-bold mb-1 uppercase">你的乐迷代号</label>
-                <input type="text" id="creator-name" placeholder="例如：鼓楼张曼玉" class="w-full p-3 border-2 border-retro-text bg-white outline-none focus:border-retro-accent font-bold">
+                <input type="text" id="creator-name" placeholder="例如：鼓楼赵雷" class="w-full p-3 border-2 border-retro-text bg-white outline-none focus:border-retro-accent font-bold">
             </div>
             <button onclick="startCreation()" class="w-full bg-retro-text text-white font-bold py-3 hover:bg-retro-accent transition-colors border-2 border-transparent active:translate-y-1">
                 [ 开启我的 POGO 天梯局 ]
@@ -67,12 +66,9 @@
                 <span id="question-progress">进度: 1 / 5</span>
             </div>
 
-            <!-- 题目卡片 -->
             <div id="card-container" class="bg-white border-2 border-retro-text p-6 shadow-[4px_4px_0_0_#2d2d2d] min-h-[180px] flex flex-col justify-between">
                 <h3 id="question-text" class="font-bold text-base md:text-lg mb-4">加载中...</h3>
-                <div class="space-y-2" id="options-container">
-                    <!-- 选项由 JS 动态注入 -->
-                </div>
+                <div class="space-y-2" id="options-container"></div>
             </div>
 
             <div class="flex space-x-4">
@@ -96,21 +92,19 @@
                 </p>
             </div>
 
-            <div id="share-action-box" class="space-y-3">
-                <!-- 动态根据身份展示 -->
-            </div>
+            <div id="share-action-box" class="space-y-3"></div>
         </div>
 
     </div>
 
-    <!-- 核心逻辑脚本 -->
     <script>
-        // 已填入正确的 Supabase 根域名及发布密钥
+        // 初始化 Supabase (使用 UMD 全局变量方式)
         const SUPABASE_URL = 'https://hrgzmwtgpacdxifcevwy.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_4XcXlLh77BtvmIajOGbpPA_T7d6b9fu';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        const { createClient } = window.supabase;
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 5 道核心灵魂拷问题目库
         const questions = [
             { id: 1, text: "Q1: 怎么看待独立乐队去上主流音综（比如《乐队的夏天》）？", optA: "时代的眼泪，终于能恰饱饭了，理解并尊重。", optB: "彻底商业化变味了，现在的现场越来越没法看。" },
             { id: 2, text: "Q2: 深夜一个人在房间，耳机里放的是？", optA: "长达15分钟、没有任何人声的宏大后摇。", optB: "粗糙破音、主唱随时可能跑调的地下朋克。" },
