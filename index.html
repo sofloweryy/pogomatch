@@ -6,8 +6,8 @@
     <title>POGO 审美天梯对决 | 测测你们能不能一起去现场撞击</title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Supabase UMD 稳定版客户端 -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <!-- 引入 Supabase 客户端 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -98,12 +98,16 @@
     </div>
 
     <script>
-        // 初始化 Supabase (使用 UMD 全局变量方式)
+        // 安全初始化 Supabase 客户端实例
         const SUPABASE_URL = 'https://hrgzmwtgpacdxifcevwy.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_4XcXlLh77BtvmIajOGbpPA_T7d6b9fu';
         
-        const { createClient } = window.supabase;
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let dbClient = null;
+        try {
+            dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (e) {
+            console.error('Supabase 初始化失败:', e);
+        }
 
         const questions = [
             { id: 1, text: "Q1: 怎么看待独立乐队去上主流音综（比如《乐队的夏天》）？", optA: "时代的眼泪，终于能恰饱饭了，理解并尊重。", optB: "彻底商业化变味了，现在的现场越来越没法看。" },
@@ -168,7 +172,8 @@
         }
 
         async function fetchDuelData(duelId) {
-            const { data, error } = await supabase
+            if (!dbClient) return;
+            const { data, error } = await dbClient
                 .from('music_duels')
                 .select('*')
                 .eq('id', duelId)
@@ -210,7 +215,12 @@
             document.getElementById('view-result').classList.remove('hidden');
 
             if (mode === 'creator') {
-                const { data, error } = await supabase
+                if (!dbClient) {
+                    alert('数据库未连接，无法生成链接！');
+                    return;
+                }
+
+                const { data, error } = await dbClient
                     .from('music_duels')
                     .insert([{ creator_name: creatorName, creator_answers: userAnswers }])
                     .select()
