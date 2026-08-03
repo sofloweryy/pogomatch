@@ -66,18 +66,13 @@
                 <span id="question-progress">进度: 1 / 5</span>
             </div>
 
-            <div id="card-container" class="bg-white border-2 border-retro-text p-6 shadow-[4px_4px_0_0_#2d2d2d] min-h-[180px] flex flex-col justify-between">
-                <h3 id="question-text" class="font-bold text-base md:text-lg mb-4">加载中...</h3>
-                <div class="space-y-2" id="options-container"></div>
-            </div>
-
-            <div class="flex space-x-4">
-                <button onclick="handleAnswer(false)" class="w-1/2 bg-gray-200 border-2 border-retro-text py-3 font-bold hover:bg-gray-300 transition-colors">
-                    ✕ 绝对不听 (Dislike)
-                </button>
-                <button onclick="handleAnswer(true)" class="w-1/2 bg-retro-text text-white border-2 border-retro-text py-3 font-bold hover:bg-retro-accent transition-colors">
-                    ✓ 懂的都懂 (Like)
-                </button>
+            <div class="bg-white border-2 border-retro-text p-6 shadow-[4px_4px_0_0_#2d2d2d] space-y-4">
+                <h3 id="question-text" class="font-bold text-base md:text-lg mb-2">加载中...</h3>
+                
+                <!-- 选项卡片化，点击直接选择 -->
+                <div class="space-y-3 pt-2" id="options-container">
+                    <!-- 动态渲染选项 -->
+                </div>
             </div>
         </div>
 
@@ -98,7 +93,6 @@
     </div>
 
     <script>
-        // 安全初始化 Supabase 客户端实例
         const SUPABASE_URL = 'https://hrgzmwtgpacdxifcevwy.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_4XcXlLh77BtvmIajOGbpPA_T7d6b9fu';
         
@@ -158,9 +152,16 @@
             document.getElementById('question-progress').innerText = `进度: ${currentIdx + 1} / ${questions.length}`;
             document.getElementById('question-text').innerText = q.text;
             
+            // 将选项渲染为可点击的大卡片，符合划卡/选择直觉
             const optionsHtml = `
-                <div class="text-xs bg-retro-bg p-2 border border-retro-border"><b>[选项A]</b> ${q.optA}</div>
-                <div class="text-xs bg-retro-bg p-2 border border-retro-border"><b>[选项B]</b> ${q.optB} (视为同意/Like)</div>
+                <button onclick="handleAnswer(false)" class="w-full text-left p-3.5 bg-retro-bg border-2 border-retro-text hover:bg-rose-50 hover:border-retro-accent transition-all font-bold text-xs md:text-sm flex items-center justify-between group">
+                    <span><b class="text-retro-accent mr-1">[选项A]</b> ${q.optA}</span>
+                    <span class="text-gray-400 group-hover:text-retro-accent">✕</span>
+                </button>
+                <button onclick="handleAnswer(true)" class="w-full text-left p-3.5 bg-retro-bg border-2 border-retro-text hover:bg-stone-900 hover:text-white transition-all font-bold text-xs md:text-sm flex items-center justify-between group">
+                    <span><b class="text-retro-accent mr-1">[选项B]</b> ${q.optB}</span>
+                    <span class="text-gray-400 group-hover:text-white">✓</span>
+                </button>
             `;
             document.getElementById('options-container').innerHTML = optionsHtml;
         }
