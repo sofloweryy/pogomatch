@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POGO 审美天梯对决 | 测测你们能不能一起去现场撞击</title>
+    <title>POGO 审美天梯对决 | Tinder 式独立音乐速配</title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Supabase 客户端 -->
@@ -41,49 +41,59 @@
         
         <header class="text-center mb-6 border-b-2 border-dashed border-retro-border pb-4">
             <h1 class="text-2xl md:text-3xl font-bold tracking-tighter">/// POGO 审美天梯对决 ///</h1>
-            <p class="text-xs md:text-sm text-gray-600 mt-1">划卡对决 · 看看你和好友是不是能一起去 Pogo 圈撞击的同类</p>
+            <p class="text-xs md:text-sm text-gray-600 mt-1">Tinder 式划卡速配 · 测测你和好友是不是现场同类</p>
         </header>
 
-        <!-- 视图 1：欢迎/创建测试页面 -->
+        <!-- 视图 1：欢迎与出题 -->
         <div id="view-home" class="space-y-4">
             <div class="bg-retro-bg p-4 border-2 border-retro-text text-sm">
                 <p class="font-bold mb-2">💡 玩法说明：</p>
-                <p class="text-gray-700 leading-relaxed">1. 输入你的乐迷昵称，完成 5 道独立音乐灵魂拷问。<br>2. 生成专属的 Pogo 挑战链接发给好友。<br>3. 看看你们的契合度是能一起手拉手跳水，还是在现场互踩帆布鞋！</p>
+                <p class="text-gray-700 leading-relaxed">1. 输入你的乐迷昵称。<br>2. 系统将从云端题库中随机抽取一道灵魂考题。<br>3. 左右滑动（或点击按钮）选择你的态度，生成专属划卡链接发给好友，看你们能不能心有灵犀！</p>
             </div>
             <div>
                 <label class="block text-xs font-bold mb-1 uppercase">你的乐迷代号</label>
                 <input type="text" id="creator-name" placeholder="例如：鼓楼赵雷" class="w-full p-3 border-2 border-retro-text bg-white outline-none focus:border-retro-accent font-bold">
             </div>
             <button onclick="startCreation()" class="w-full bg-retro-text text-white font-bold py-3 hover:bg-retro-accent transition-colors border-2 border-transparent active:translate-y-1">
-                [ 开启我的 POGO 天梯局 ]
+                [ 生成我的 POGO 划卡局 ]
             </button>
         </div>
 
-        <!-- 视图 2：答题/划卡互动区 -->
+        <!-- 视图 2：Tinder 卡片划卡互动区 -->
         <div id="view-quiz" class="hidden space-y-6">
             <div class="flex justify-between items-center text-xs font-bold border-b border-retro-text pb-2">
-                <span id="quiz-role-title" class="bg-retro-accent text-white px-2 py-0.5">正在对决...</span>
-                <span id="question-progress">进度: 1 / 5</span>
+                <span id="quiz-role-title" class="bg-retro-accent text-white px-2 py-0.5">审美速配中...</span>
+                <span id="question-progress">云端题库灵魂拷问</span>
             </div>
 
-            <div class="bg-white border-2 border-retro-text p-6 shadow-[4px_4px_0_0_#2d2d2d] space-y-4">
-                <h3 id="question-text" class="font-bold text-base md:text-lg mb-2">加载中...</h3>
-                
-                <!-- 选项卡片化，点击直接选择 -->
-                <div class="space-y-3 pt-2" id="options-container">
-                    <!-- 动态渲染选项 -->
-                </div>
+            <!-- 卡片主体 -->
+            <div class="bg-white border-2 border-retro-text p-8 shadow-[6px_6px_0_0_#2d2d2d] min-h-[220px] flex flex-col justify-between text-center relative overflow-hidden">
+                <div class="absolute top-2 left-2 text-[10px] text-gray-400 uppercase tracking-widest">POGO CARD</div>
+                <h3 id="question-text" class="font-bold text-base md:text-lg my-auto text-retro-text leading-relaxed">正在从数据库加载题目...</h3>
+                <div id="question-sub" class="text-xs text-retro-accent font-bold mt-2"></div>
+            </div>
+
+            <!-- Tinder 风格双按钮（左滑/右滑） -->
+            <div class="flex space-x-4 pt-2">
+                <button onclick="handleSwipe(false)" class="w-1/2 bg-gray-100 border-2 border-retro-text py-4 font-bold hover:bg-rose-100 hover:border-retro-accent transition-all text-xs md:text-sm flex items-center justify-center space-x-2 group">
+                    <span class="text-lg text-retro-accent group-hover:scale-125 transition-transform">✕</span>
+                    <span>绝对不听 (Swipe Left)</span>
+                </button>
+                <button onclick="handleSwipe(true)" class="w-1/2 bg-retro-text text-white border-2 border-retro-text py-4 font-bold hover:bg-retro-accent transition-all text-xs md:text-sm flex items-center justify-center space-x-2 group">
+                    <span class="text-lg text-green-400 group-hover:scale-125 transition-transform">✓</span>
+                    <span>懂的都懂 (Swipe Right)</span>
+                </button>
             </div>
         </div>
 
-        <!-- 视图 3：战报与分享页面 -->
+        <!-- 视图 3：战报与连结页面 -->
         <div id="view-result" class="hidden space-y-6 text-center">
             <div class="border-4 border-double border-retro-text p-6 bg-retro-bg">
-                <p class="text-xs uppercase font-bold text-gray-500 mb-1">POGO 审美天梯战报</p>
-                <h2 id="result-title" class="text-2xl font-bold text-retro-accent mb-2">【建议立刻组乐队结婚】</h2>
-                <div class="text-4xl font-extrabold my-4" id="score-display">契合度: 95%</div>
+                <p class="text-xs uppercase font-bold text-gray-500 mb-1">POGO 审美速配战报</p>
+                <h2 id="result-title" class="text-2xl font-bold text-retro-accent mb-2">【匹配成功】</h2>
+                <div class="text-3xl font-extrabold my-4" id="score-display">灵魂契合度: 100%</div>
                 <p id="result-desc" class="text-sm text-gray-700 leading-relaxed bg-white p-3 border border-retro-text">
-                    你们的耳机里流淌着相同的失真电流。在 Pogo 现场，你们大概率会默契地互递矿泉水。
+                    你们在核心审美上完美同频，今晚的 Livehouse 现场见！
                 </p>
             </div>
 
@@ -103,73 +113,134 @@
             console.error('Supabase 初始化失败:', e);
         }
 
-        const questions = [
-            { id: 1, text: "Q1: 怎么看待独立乐队去上主流音综（比如《乐队的夏天》）？", optA: "时代的眼泪，终于能恰饱饭了，理解并尊重。", optB: "彻底商业化变味了，现在的现场越来越没法看。" },
-            { id: 2, text: "Q2: 深夜一个人在房间，耳机里放的是？", optA: "长达15分钟、没有任何人声的宏大后摇。", optB: "粗糙破音、主唱随时可能跑调的地下朋克。" },
-            { id: 3, text: "Q3: 面对 Livehouse 演出时，你的身体本能是？", optA: "站在调音台旁边冷静观察，绝不轻易被人群推搡。", optB: "失真一响直接冲进 Pogo 圈，把地板踩得震天响！" },
-            { id: 4, text: "Q4: 如果买了一张极其冷门、全网只有几十个人听过的乐队黑胶，你的心态是？", optA: "狂喜！觉得全世界只有自己掌握了宇宙真理，秘不示人。", optB: "疯狂安利！恨不得在每个社交平台当野生宣发。" },
-            { id: 5, text: "Q5: 如何定义一个“真正的”硬核独立乐迷？", optA: "钱包永远空空，但每个周末的排练室和Livehouse都有他的身影。", optB: "只要听歌够冷门，哪怕在台下当个冷漠的观察员也算。" }
-        ];
-
-        let currentIdx = 0;
-        let userAnswers = []; 
+        let currentQuestion = null;
         let mode = 'creator'; 
-        let creatorName = '';
+        let userName = '';
         let targetDuelId = null;
-        let creatorAnswersData = [];
+        let creatorChoice = null;
+        let creatorNameData = '';
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
             const duelId = params.get('duel');
             if (duelId) {
                 mode = 'challenger';
                 targetDuelId = duelId;
-                document.getElementById('quiz-role-title').innerText = '正在应战好友的 Pogo 对决';
+                document.getElementById('quiz-role-title').innerText = '应战好友的 Tinder 划卡局';
                 fetchDuelData(duelId);
+            } else {
+                // 如果是新用户，直接从数据库的 fallback_questions 表中随机抽一题
+                await fetchRandomQuestionFromDB();
             }
         });
 
-        function startCreation() {
+        async function fetchRandomQuestionFromDB() {
+            if (!dbClient) return;
+            const { data, error } = await dbClient
+                .from('fallback_questions')
+                .select('*');
+
+            if (error || !data || data.length === 0) {
+                // 兜底保护：如果云端没取到，给个默认硬核题
+                currentQuestion = {
+                    text: "深夜一个人在房间，耳机里必须是长达15分钟、没有任何人声的宏大后摇。",
+                    sub: "—— 关于孤独与失真电流"
+                };
+                return;
+            }
+
+            // 随机抽出一道
+            const randomIndex = Math.floor(Math.random() * data.length);
+            currentQuestion = {
+                text: data[randomIndex].text,
+                sub: data[randomIndex].sub
+            };
+        }
+
+        async function startCreation() {
             const nameInput = document.getElementById('creator-name').value.trim();
             if (!nameInput) {
                 alert('请先输入你的乐迷代号！');
                 return;
             }
-            creatorName = nameInput;
-            mode = 'creator';
-            document.getElementById('quiz-role-title').innerText = `发起者: ${creatorName}`;
-            document.getElementById('view-home').classList.add('hidden');
-            document.getElementById('view-quiz').classList.remove('hidden');
-            renderQuestion();
-        }
-
-        function renderQuestion() {
-            if (currentIdx >= questions.length) {
-                finishQuiz();
+            if (!currentQuestion) {
+                alert('题目正在从云端加载，请稍候再试！');
                 return;
             }
-            const q = questions[currentIdx];
-            document.getElementById('question-progress').innerText = `进度: ${currentIdx + 1} / ${questions.length}`;
-            document.getElementById('question-text').innerText = q.text;
-            
-            // 将选项渲染为可点击的大卡片，符合划卡/选择直觉
-            const optionsHtml = `
-                <button onclick="handleAnswer(false)" class="w-full text-left p-3.5 bg-retro-bg border-2 border-retro-text hover:bg-rose-50 hover:border-retro-accent transition-all font-bold text-xs md:text-sm flex items-center justify-between group">
-                    <span><b class="text-retro-accent mr-1">[选项A]</b> ${q.optA}</span>
-                    <span class="text-gray-400 group-hover:text-retro-accent">✕</span>
-                </button>
-                <button onclick="handleAnswer(true)" class="w-full text-left p-3.5 bg-retro-bg border-2 border-retro-text hover:bg-stone-900 hover:text-white transition-all font-bold text-xs md:text-sm flex items-center justify-between group">
-                    <span><b class="text-retro-accent mr-1">[选项B]</b> ${q.optB}</span>
-                    <span class="text-gray-400 group-hover:text-white">✓</span>
-                </button>
-            `;
-            document.getElementById('options-container').innerHTML = optionsHtml;
+            userName = nameInput;
+            document.getElementById('quiz-role-title').innerText = `发起者: ${userName}`;
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-quiz').classList.remove('hidden');
+            renderCard();
         }
 
-        function handleAnswer(choice) {
-            userAnswers.push(choice);
-            currentIdx++;
-            renderQuestion();
+        function renderCard() {
+            document.getElementById('question-text').innerText = currentQuestion.text;
+            document.getElementById('question-sub').innerText = currentQuestion.sub;
+        }
+
+        async function handleSwipe(choice) {
+            if (mode === 'creator') {
+                creatorChoice = choice;
+                if (!dbClient) {
+                    alert('数据库未连接！');
+                    return;
+                }
+
+                const { data, error } = await dbClient
+                    .from('music_duels')
+                    .insert([{ 
+                        creator_name: userName, 
+                        creator_answers: { 
+                            text: currentQuestion.text, 
+                            sub: currentQuestion.sub, 
+                            choice: creatorChoice 
+                        } 
+                    }])
+                    .select()
+                    .single();
+
+                if (error) {
+                    alert('生成划卡链接失败: ' + error.message);
+                    return;
+                }
+
+                const duelId = data.id;
+                const shareUrl = window.location.origin + window.location.pathname + '?duel=' + duelId;
+
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-result').classList.remove('hidden');
+                document.getElementById('result-title').innerText = '【Pogo 划卡局已生成】';
+                document.getElementById('score-display').innerText = '等待好友右滑应战';
+                document.getElementById('result-desc').innerHTML = `你的专属 Tinder 审美卡片已就绪！点击下方按钮复制链接发给好友，看看你们能不能在音乐审美上一拍即合。`;
+                document.getElementById('share-action-box').innerHTML = `
+                    <button onclick="navigator.clipboard.writeText('${shareUrl}'); alert('划卡挑战链接已复制，快发给好友吧！');" class="w-full bg-retro-accent text-white font-bold py-3 hover:opacity-90 border-2 border-retro-text">
+                        [ 复制 Tinder 挑战链接 ]
+                    </button>
+                `;
+
+            } else {
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-result').classList.remove('hidden');
+
+                const isMatched = (choice === creatorChoice);
+
+                if (isMatched) {
+                    document.getElementById('result-title').innerText = '【🎯 完美右滑：天生同类】';
+                    document.getElementById('score-display').innerText = '契合度: 100%';
+                    document.getElementById('result-desc').innerText = `你和 [${creatorNameData}] 的选择完全一致！你们拥有相同的音乐磁场，今晚很适合一起去前排跳水。`;
+                } else {
+                    document.getElementById('result-title').innerText = '【⚡ 轨道偏离：审美摩擦】';
+                    document.getElementById('score-display').innerText = '契合度: 0%';
+                    document.getElementById('result-desc').innerText = `笑死，你和 [${creatorNameData}] 的选择截然相反！在独立音乐的世界里，你们俩大概率会在现场因为意见不合而互踩帆布鞋。`;
+                }
+
+                document.getElementById('share-action-box').innerHTML = `
+                    <button onclick="window.location.href = window.location.pathname;" class="w-full bg-retro-text text-white font-bold py-3 hover:bg-retro-accent border-2">
+                        [ 我也要创建我的划卡局 ]
+                    </button>
+                `;
+            }
         }
 
         async function fetchDuelData(duelId) {
@@ -181,19 +252,24 @@
                 .single();
 
             if (error || !data) {
-                alert('该对决链接已失效或不存在！');
+                alert('该划卡对决链接已失效或不存在！');
                 window.location.href = window.location.pathname;
                 return;
             }
-            creatorName = data.creator_name;
-            creatorAnswersData = data.creator_answers;
-            
+
+            creatorNameData = data.creator_name;
+            creatorChoice = data.creator_answers.choice;
+            currentQuestion = {
+                text: data.creator_answers.text,
+                sub: data.creator_answers.sub
+            };
+
             document.getElementById('view-home').innerHTML = `
                 <div>
-                    <label class="block text-xs font-bold mb-1 uppercase">你正在应战 [ ${creatorName} ] 的 Pogo 局</label>
+                    <label class="block text-xs font-bold mb-1 uppercase">你正在应战 [ ${creatorNameData} ] 的审美卡片</label>
                     <input type="text" id="challenger-name" placeholder="输入你的乐迷昵称" class="w-full p-3 border-2 border-retro-text bg-white outline-none focus:border-retro-accent font-bold mb-4">
                     <button onclick="startChallengerQuiz()" class="w-full bg-retro-text text-white font-bold py-3 hover:bg-retro-accent transition-colors border-2">
-                        [ 接受 Pogo 挑战并开始划卡 ]
+                        [ 开始 Tinder 划卡对决 ]
                     </button>
                 </div>
             `;
@@ -202,78 +278,13 @@
         function startChallengerQuiz() {
             const nameInput = document.getElementById('challenger-name').value.trim();
             if (!nameInput) {
-                alert('请输入你的昵称才能开始对决！');
+                alert('请输入你的昵称才能开始划卡！');
                 return;
             }
-            creatorName = nameInput;
+            userName = nameInput;
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('view-quiz').classList.remove('hidden');
-            renderQuestion();
-        }
-
-        async function finishQuiz() {
-            document.getElementById('view-quiz').classList.add('hidden');
-            document.getElementById('view-result').classList.remove('hidden');
-
-            if (mode === 'creator') {
-                if (!dbClient) {
-                    alert('数据库未连接，无法生成链接！');
-                    return;
-                }
-
-                const { data, error } = await dbClient
-                    .from('music_duels')
-                    .insert([{ creator_name: creatorName, creator_answers: userAnswers }])
-                    .select()
-                    .single();
-
-                if (error) {
-                    alert('生成链接失败: ' + error.message);
-                    return;
-                }
-
-                const duelId = data.id;
-                const shareUrl = window.location.origin + window.location.pathname + '?duel=' + duelId;
-
-                document.getElementById('result-title').innerText = '【Pogo 天梯局已生成】';
-                document.getElementById('score-display').innerText = '等待好友应战';
-                document.getElementById('result-desc').innerHTML = `你的 Pogo 审美天梯局已就绪！点击下方按钮复制链接，发给好友来看看你们能不能一起去现场冲撞。`;
-                document.getElementById('share-action-box').innerHTML = `
-                    <button onclick="navigator.clipboard.writeText('${shareUrl}'); alert('挑战链接已复制，快发给小伙伴吧！');" class="w-full bg-retro-accent text-white font-bold py-3 hover:opacity-90 border-2 border-retro-text">
-                        [ 复制 Pogo 挑战链接 ]
-                    </button>
-                `;
-
-            } else {
-                let matchCount = 0;
-                for (let i = 0; i < userAnswers.length; i++) {
-                    if (userAnswers[i] === creatorAnswersData[i]) {
-                        matchCount++;
-                    }
-                }
-                const score = Math.round((matchCount / questions.length) * 100);
-
-                let title = '', desc = '';
-                if (score >= 80) {
-                    title = '【Pogo 黄金搭档：建议原地组乐队】';
-                    desc = `你们的契合度高达 ${score}%！在 Pogo 圈里你们不仅能完美避开彼此的拳头，还能在摔倒时第一时间把对方捞起来。`;
-                } else if (score >= 40) {
-                    title = '【相敬如宾的围观群众】';
-                    desc = `你们的契合度为 ${score}%。虽然在部分老乐队上略有分歧，但站在Livehouse后方安静看演出还是挺和谐的。`;
-                } else {
-                    title = '【现场碰见大概率会互踩帆布鞋并绝交】';
-                    desc = `救命，契合度仅有 ${score}%！你们俩的音乐审美简直跨物种，去现场大概率会在 Pogo 圈里互相把对方撞飞。`;
-                }
-
-                document.getElementById('result-title').innerText = title;
-                document.getElementById('score-display').innerText = `契合度: ${score}%`;
-                document.getElementById('result-desc').innerText = desc;
-                document.getElementById('share-action-box').innerHTML = `
-                    <button onclick="window.location.href = window.location.pathname;" class="w-full bg-retro-text text-white font-bold py-3 hover:bg-retro-accent border-2">
-                        [ 我也要创建我的 Pogo 局 ]
-                    </button>
-                `;
-            }
+            renderCard();
         }
     </script>
 </body>
